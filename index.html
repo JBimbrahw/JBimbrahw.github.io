@@ -1,23 +1,28 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html>
+<body>
 
-<div class="home">
+<audio id="myAudio">
+  <source src="Alarm02.wav" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
-  <h1 class="page-heading">Posts</h1>
+<p>Click the buttons to play or pause the audio.</p>
 
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+<button onclick="playAudio()" type="button">Play Audio</button>
+<button onclick="pauseAudio()" type="button">Pause Audio</button> 
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
+<script>
+var x = document.getElementById("myAudio"); 
 
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+function playAudio() { 
+  x.play(); 
+} 
 
-</div>
+function pauseAudio() { 
+  x.pause(); 
+} 
+</script>
+
+</body>
+</html>
