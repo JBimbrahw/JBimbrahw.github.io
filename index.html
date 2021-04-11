@@ -6,13 +6,13 @@
   <img id="rightsidebike" src="kid-on-bike.jpg">
   <button id="advancebutton" type="button" onclick="advanceRidersAndFly()" style="position: absolute; top: 500px;">Move Bikes</button>
 
-  <br>
-  <p id="problem" style = "position: absolute; top: 500px">
+  <p id="problem" style = "position: absolute; top: 550px">
     Two cyclist 15 km apart agree to pedal towards each other and meet in the middle.
     They both move at 15 km per hour.  A fly sitting on the shoulder of one cyclist takes off with a speed of 30 km/h for the other cyclist.
     After reaching the second cyclist's shoulder he will fly back to the first cyclist and so on.
     How far will the fly travel in total before the cyclists meet?
   </p>
+
   <script>
 
     const convertPXToKM = (pixels) => {
@@ -97,12 +97,12 @@
 
     const detectReachedRider = () => {
       if(currDirectionOfFly === "right") {
-        if( Math.abs(flyX - (rightBikePos + 40) ) < 2) {
+        if( Math.abs(flyX - (rightBikePos + 75) ) < 2) {
           return true
         }
       }
       else {
-        if( Math.abs(flyX - (leftBikePos) ) < 2) {
+        if( Math.abs(flyX - (leftBikePos + 75) ) < 2) {
           return true
         }
       }
@@ -116,10 +116,10 @@
     rightBike.style.position = "absolute"
 
     let screenwidth = window.innerWidth
-    let imageLeftWidth = 60
-    let imageRighttWidth = 60
-    let imageLeftHeight = 60
-    let imageRighttHeight = 60
+    let imageLeftWidth = 150
+    let imageRighttWidth = 150
+    let imageLeftHeight = 150
+    let imageRighttHeight = 150
     let leftBikePos = 0
     let rightBikePos = screenwidth - imageRighttWidth
 
@@ -138,7 +138,7 @@
     rightBike.style.top = 350 + "px"
 
     //initialize the fly
-    let flyX = 0
+    let flyX = 75
     let flyY = 330
 
     let currDirectionOfFly = "right"
