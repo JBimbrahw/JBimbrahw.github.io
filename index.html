@@ -1,28 +1,146 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html style="min-height: 100%">
+<body id="documentBody" style="min-height: 100%; margin: 0; position: relative;">
 
-<audio id="myAudio">
-  <source src="./Alarm.wav" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+  <img id="leftsidebike" src="guyonbike.jpg">
+  <img id="rightsidebike" src="kid-on-bike.jpg">
+  <button id="advancebutton" type="button" onclick="advanceRidersAndFly()" style="position: absolute; top: 500px;">Move Bikes</button>
 
-<p>Click the buttons to play or pause the audio.</p>
+  <script>
 
-<button onclick="playAudio()" type="button">Play Audio</button>
-<button onclick="pauseAudio()" type="button">Pause Audio</button>
+    const convertPXToKM = (pixels) => {
+      return pixels/pxPerKM
+    }
 
-<script>
-var x = document.getElementById("myAudio");
+    const advanceRidersAndFly = () => {
 
-function playAudio() {
-  x.play();
-}
+      if(inMotion)
+        return
+      //we want to move the riders towards each other
 
-function pauseAudio() {
-  x.pause();
-}
-</script>
+      inMotion = true
 
+      let flyStart = flyX
+      let flyEnd
+
+      //keep moving the fly until a collision
+      let interval = setInterval( ()=> {
+        leftBikePos += 1
+        rightBikePos -= 1
+        leftBike.style.left = leftBikePos + "px"
+        rightBike.style.left = rightBikePos + "px"
+        flyX += (currDirectionOfFly === "right") ? 2 : -2
+        moveFly(flyX, flyY, flyStart)
+        if(detectReachedRider()) {
+          flyEnd = flyX
+          inMotion = false
+          clearInterval(interval)
+          //now record the distance traveled by the fly and reverse the direction of the fly
+          setTimeout( () => {
+            let tripDiv = document.createElement("div");
+            tripDiv.style.position = "absolute"
+            tripDiv.style.top = 30*numTrips + "px"
+            tripDiv.style.left = Math.min(flyStart, flyEnd) + "px"
+            tripDiv.style.height = "30px"
+            tripDiv.style.width = Math.abs(flyEnd - flyStart) + "px"//get info from the flys last trip
+            tripDiv.style.background = "red"
+            documentBody.appendChild(tripDiv)
+            currDirectionOfFly = (currDirectionOfFly === "right") ? "left" : "right"
+            numTrips++
+
+            //also create a label to the right of it
+            let label = document.createElement("div");
+            label.style.position = "absolute"
+            label.style.top = 30*numTrips - 30 + "px"
+            label.style.left = Math.max(flyStart, flyEnd) + "px"
+            label.innerHTML = "Trip " + numTrips + ": " + Math.round(100*30/(Math.pow(3, numTrips)))/100 + "km"
+            label.style.fontSize = "25px"
+            documentBody.appendChild(label)
+          }, 750)
+        }
+      }, 5)
+
+    }
+
+    const moveFly = (x,y, startX) => {
+
+      if(document.getElementById("flyDiv")) {
+        let documentBody = document.getElementById("documentBody")
+        let fly = document.getElementById("flyDiv")
+        documentBody.removeChild(fly)
+      }
+
+      if(document.getElementById("trailDiv")) {
+        let documentBody = document.getElementById("documentBody")
+        let trail = document.getElementById("trailDiv")
+        documentBody.removeChild(trail)
+      }
+
+      let flyDiv = document.createElement("div");
+      flyDiv.id = "flyDiv"
+      flyDiv.style.position = "absolute"
+      flyDiv.style.top = y + "px"
+      flyDiv.style.left = x + "px"
+      flyDiv.style.height = "20px"
+      flyDiv.style.width = "20px"
+      flyDiv.style.background = "black"
+      documentBody.appendChild(flyDiv)
+
+    }
+
+    const detectReachedRider = () => {
+      if(currDirectionOfFly === "right") {
+        if( Math.abs(flyX - (rightBikePos + 40) ) < 2) {
+          return true
+        }
+      }
+      else {
+        if( Math.abs(flyX - (leftBikePos) ) < 2) {
+          return true
+        }
+      }
+      return false
+    }
+
+    //set starting positions of the bikes
+    const leftBike = document.getElementById("leftsidebike")
+    const rightBike = document.getElementById("rightsidebike")
+    leftBike.style.position = "absolute"
+    rightBike.style.position = "absolute"
+
+    let screenwidth = window.innerWidth
+    let imageLeftWidth = 60
+    let imageRighttWidth = 60
+    let imageLeftHeight = 60
+    let imageRighttHeight = 60
+    let leftBikePos = 0
+    let rightBikePos = screenwidth - imageRighttWidth
+
+    leftBike.style.width = imageLeftWidth + "px"
+    rightBike.style.width = imageRighttWidth + "px"
+    leftBike.style.height = imageLeftWidth + "px"
+    rightBike.style.height = imageRighttWidth + "px"
+
+    leftBike.style.left = leftBikePos + "px"
+    rightBike.style.left = rightBikePos + "px"
+
+    let pxPerKM = (rightBikePos - leftBikePos)/15
+
+
+    leftBike.style.top = 350 + "px"
+    rightBike.style.top = 350 + "px"
+
+    //initialize the fly
+    let flyX = 0
+    let flyY = 330
+
+    let currDirectionOfFly = "right"
+    let numTrips = 0
+
+    let inMotion = false
+
+    moveFly(flyX, flyY, flyX)
+
+  </script>
 </body>
 </html>
