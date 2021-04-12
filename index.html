@@ -15,18 +15,12 @@
 
   <script>
 
-    const convertPXToKM = (pixels) => {
-      return pixels/pxPerKM
-    }
-
     const advanceRidersAndFly = () => {
 
       if(inMotion)
         return
-      //we want to move the riders towards each other
 
       inMotion = true
-
       let flyStart = flyX
       let flyEnd
 
@@ -130,9 +124,6 @@
 
     leftBike.style.left = leftBikePos + "px"
     rightBike.style.left = rightBikePos + "px"
-
-    let pxPerKM = (rightBikePos - leftBikePos)/15
-
 
     leftBike.style.top = 350 + "px"
     rightBike.style.top = 350 + "px"
