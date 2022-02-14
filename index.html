@@ -1,144 +1,121 @@
 <!DOCTYPE html>
-<html style="min-height: 100%">
-<body id="documentBody" style="min-height: 100%; margin: 0; position: relative;">
+<html>
+  <head>
+    <style>
+    body {
+        background-color: white;
+    }
+    h1 {
+        color: black;
+        text-align: center;
+    }
+    
+    p {
+        font-family: verdana;
+        font-size: 20px;
+        position: fixed;
+        line-height: 20px;
+        font-size: 18px;
+        text-align: center;
+    }
 
-  <img id="leftsidebike" src="guyonbike.jpg">
-  <img id="rightsidebike" src="kid-on-bike.jpg">
-  <button id="advancebutton" type="button" onclick="advanceRidersAndFly()" style="position: absolute; top: 500px;">Move Bikes</button>
+    #instructions {
+      top: 250px;
+      right: 50px;
+    }
 
-  <p id="problem" style = "position: absolute; top: 550px">
-    Two cyclist 15 km apart agree to pedal towards each other and meet in the middle.
-    They both move at 15 km per hour.  A fly sitting on the shoulder of one cyclist takes off with a speed of 30 km/h for the other cyclist.
-    After reaching the second cyclist's shoulder he will fly back to the first cyclist and so on.
-    How far will the fly travel in total before the cyclists meet?
+    #kanga { 
+      position: fixed;
+      top: 10px;
+      right: 150px;
+    }
+
+    .greenbox {
+      background-color: white;
+      width: 60px;
+      height: 60px;
+      border: 10px solid green;
+      padding: 30px;
+      margin: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .letter {
+      line-height: 40px;
+      font-size: 38px;
+    }
+
+    </style>
+  </head>
+  <body>
+
+  <h1>Swap-A-Roo!</h1>
+
+  <p style="line-height: 30px; font-size: 28px; margin-left: 180px">
+    Target word: FAST
   </p>
+  <br><br>
+  <br><br><br>
+
+  <div style="display: flex; position: relative; left: 150px;">
+    <div id="box1" class="greenbox">
+      <p class="letter" id="S">S</p>
+    </div>
+    <div id="box2" class="greenbox">
+      <p class="letter" id="L">L</p>
+    </div>
+    <div id="box3" class="greenbox">
+      <p class="letter" id="O">O</p>
+    </div>
+    <div id="box4" class="greenbox">
+      <p class="letter" id="W">W</p>
+    </div>
+  </div>
+
+  <img id="kanga" src="kanga.jpeg"/>
+
+  <p id="instructions">
+    Start with the word given in the blocks.<br>
+    Then use the extra letters from <strong><i>down under</i></strong>.<br>
+    Replace one letter to create a new word.<br>
+    Keep going until you form the target word.<br><br>
+
+    Ex: SAD -> BAD -> BAY -> BOY -> JOY
+
+    <br><br>
+
+    See how it works?<br><br>
+    Well, have a go, mate!<br><br>
+    Play Swap-A-Roo!
+  </p>
+
+  <div style="margin-left: 200px; position: relative; top: 50px">
+    <div style="position: relative; left: 10px; z-index: 100;">
+      <p class="letter" id="S">T</p>
+    </div>
+    <div style="position: relative; left: 110px; z-index: 100;">
+      <p class="letter" id="S">O</p>
+    </div>
+    <div style="position: relative; left: 210px; z-index: 100;">
+      <p class="letter" id="S">M</p>
+    </div>
+    <div style="position: relative; left: 310px; z-index: 100;">
+      <p class="letter" id="S">A</p>
+    </div>
+    <div style="position: relative; left: 410px; z-index: 100;">
+      <p class="letter" id="S">F</p>
+    </div>
+    <img style="position: fixed; left: 250px; height: 400px; width: 600px;" src="australia.jpg" />
+  </div>
+  
+  <div>
+
+  </body>
 
   <script>
 
-    const advanceRidersAndFly = () => {
-
-      if(inMotion)
-        return
-
-      inMotion = true
-      let flyStart = flyX
-      let flyEnd
-
-      //keep moving the fly until a collision
-      let interval = setInterval( ()=> {
-        leftBikePos += 1
-        rightBikePos -= 1
-        leftBike.style.left = leftBikePos + "px"
-        rightBike.style.left = rightBikePos + "px"
-        flyX += (currDirectionOfFly === "right") ? 2 : -2
-        moveFly(flyX, flyY, flyStart)
-        if(detectReachedRider()) {
-          flyEnd = flyX
-          inMotion = false
-          clearInterval(interval)
-          //now record the distance traveled by the fly and reverse the direction of the fly
-          setTimeout( () => {
-            let tripDiv = document.createElement("div");
-            tripDiv.style.position = "absolute"
-            tripDiv.style.top = 30*numTrips + "px"
-            tripDiv.style.left = Math.min(flyStart, flyEnd) + "px"
-            tripDiv.style.height = "30px"
-            tripDiv.style.width = Math.abs(flyEnd - flyStart) + "px"//get info from the flys last trip
-            tripDiv.style.background = "red"
-            documentBody.appendChild(tripDiv)
-            currDirectionOfFly = (currDirectionOfFly === "right") ? "left" : "right"
-            numTrips++
-
-            //also create a label to the right of it
-            let label = document.createElement("div");
-            label.style.position = "absolute"
-            label.style.top = 30*numTrips - 30 + "px"
-            label.style.left = Math.max(flyStart, flyEnd) + "px"
-            label.innerHTML = "Trip " + numTrips + ": " + Math.round(100*30/(Math.pow(3, numTrips)))/100 + "km"
-            label.style.fontSize = "25px"
-            documentBody.appendChild(label)
-          }, 750)
-        }
-      }, 5)
-
-    }
-
-    const moveFly = (x,y, startX) => {
-
-      if(document.getElementById("flyDiv")) {
-        let documentBody = document.getElementById("documentBody")
-        let fly = document.getElementById("flyDiv")
-        documentBody.removeChild(fly)
-      }
-
-      if(document.getElementById("trailDiv")) {
-        let documentBody = document.getElementById("documentBody")
-        let trail = document.getElementById("trailDiv")
-        documentBody.removeChild(trail)
-      }
-
-      let flyDiv = document.createElement("div");
-      flyDiv.id = "flyDiv"
-      flyDiv.style.position = "absolute"
-      flyDiv.style.top = y + "px"
-      flyDiv.style.left = x + "px"
-      flyDiv.style.height = "20px"
-      flyDiv.style.width = "20px"
-      flyDiv.style.background = "black"
-      documentBody.appendChild(flyDiv)
-
-    }
-
-    const detectReachedRider = () => {
-      if(currDirectionOfFly === "right") {
-        if( Math.abs(flyX - (rightBikePos + 75) ) < 2) {
-          return true
-        }
-      }
-      else {
-        if( Math.abs(flyX - (leftBikePos + 75) ) < 2) {
-          return true
-        }
-      }
-      return false
-    }
-
-    //set starting positions of the bikes
-    const leftBike = document.getElementById("leftsidebike")
-    const rightBike = document.getElementById("rightsidebike")
-    leftBike.style.position = "absolute"
-    rightBike.style.position = "absolute"
-
-    let screenwidth = window.innerWidth
-    let imageLeftWidth = 150
-    let imageRighttWidth = 150
-    let imageLeftHeight = 150
-    let imageRighttHeight = 150
-    let leftBikePos = 0
-    let rightBikePos = screenwidth - imageRighttWidth
-
-    leftBike.style.width = imageLeftWidth + "px"
-    rightBike.style.width = imageRighttWidth + "px"
-    leftBike.style.height = imageLeftWidth + "px"
-    rightBike.style.height = imageRighttWidth + "px"
-
-    leftBike.style.left = leftBikePos + "px"
-    rightBike.style.left = rightBikePos + "px"
-
-    leftBike.style.top = 350 + "px"
-    rightBike.style.top = 350 + "px"
-
-    //initialize the fly
-    let flyX = 75
-    let flyY = 330
-
-    let currDirectionOfFly = "right"
-    let numTrips = 0
-
-    let inMotion = false
-
-    moveFly(flyX, flyY, flyX)
-
   </script>
-</body>
+
 </html>
