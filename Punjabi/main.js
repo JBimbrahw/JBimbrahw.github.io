@@ -19,8 +19,40 @@ let words = {
     "ਜ਼ਮਾਨੇ":"times",
     "ਘਰੇਲੂ":"domestic",
     "ਉਤਸ਼ਾਹ":"enthusiasm",
-    "ਤਰਾਸ-ਤਰਾਸ ਕਰਨਾ":"to regret"
+    "ਤਰਾਸ-ਤਰਾਸ ਕਰਨਾ":"to regret",
+    "ਸਾਹਿਤ" : "literature",
+    "ਕੁਹਾੜੀ" : "the ax",
+    "ਦਾਤ " : "gift",
+    "ਡੇਰੇ" : "camp",
+    "ਆ ਜਾ ਰਹੇ ਸਨ" : "were coming",
+    "ਜਿਆਦਾਤਰ" : "most",
+    "ਅਜਿਹੇ" : "such",
+    "ਜਿਨ੍ਹਾਂ ਦੇ" : "whose",
+    "ਪੁੱਤਰ" : "son",
+    "ਹਮੇਸ਼ਾ ਦੀ ਤਰ੍ਹਾਂ" : "as always",
+    "ਖੈਰਾਤੀਆਂ" : "charities",
+    "ਤਾਂਤਾ ਲੱਗਿਆ ਹੋਇਆ ਸੀ" : "was in full swing",
+    "ਬਖਸ਼" : "bless",
+    "ਖੜਕਿਆ" : "knocked/rang",
+    "ਪਤਨੀ" : "wife",
+    "ਚਿੰਤਤ" : "worried",
+    "ਰਵਾਨਾ" : "depart",
+    "ਰਵਾਨਾ ਹੋ ਗਏ" : "departed",
+    "ਦਾਖਲਾ":"admission",
+    "ਤਾਕ":"wait",
+    "ਪਰਛਾਵਾਂ":"shadow",
+    "ਵਾਅਦੇ":"promises",
+    "ਅਫਸੋਸ":"sorry",
+    "ਮੁਤਾਬਕ":"according to",
+    "ਅਲੋਪ":"disappear",
+    "ਖਿੜੇ":"blossom",
+    "ਖਿੜੇ ਹੋਇਆ":"blooming",
+    "ACTION WORDS":"...",
+
+
+
 };
+
 
 let TO_ENGLISH = 0;
 let TO_PUNJABI = 1;
@@ -30,18 +62,12 @@ let translationOrder = TO_ENGLISH;
 let punjabiWords = [];
 let englishWords = [];
 
-let numCardsSeen = 0;
-
 for(let key in words) {
     punjabiWords.push(key);
     englishWords.push(words[key]);
 }
 
-// let indexes = [];
-// let N = Object.keys(words).length;//not sure this is the correct syntax
-// for (let i = 0; i < N; i++) {
-//    indexes.push(i);
-// }
+let MAX_CARD_NUMBER = punjabiWords.length;
 
 function ShowFlashCard() {
     document.getElementById("answerWord").innerHTML = "";
@@ -50,8 +76,7 @@ function ShowFlashCard() {
     else
         document.getElementById("questionWord").innerHTML = englishWords[number];
 
-    numCardsSeen++;
-    document.getElementById("count").innerHTML = "Number of flashcards seen: " + numCardsSeen;
+    document.getElementById("cardNumber").innerHTML = number + 1;
 }
 
 function ShowAnswer(){
@@ -62,11 +87,13 @@ function ShowAnswer(){
 }
 
 function Back(){
+    if(number == 0) return;
     number--;
     ShowFlashCard();
 }
 
 function Next(){
+    if(number == MAX_CARD_NUMBER - 1)   return;
     number++;
     ShowFlashCard();
 }
@@ -81,10 +108,14 @@ function ReverseTranslate() {
 }
 
 function GoToCardNumber(){
-    let maxCardNumber = punjabiWords.length;
-    let num = prompt("What card number would you like to go to? Pick a number between 1 and " + maxCardNumber + ":")
-    number = num - 1;
-    ShowFlashCard();
+    let num = prompt("What card number would you like to go to? Pick a number between 1 and " + MAX_CARD_NUMBER + ":")
+    if(num <= 0 || isNaN(num) || num >= MAX_CARD_NUMBER){
+        alert("Please try again. Enter a number between 0 and " + MAX_CARD_NUMBER);
+    }
+    else {
+        number = num - 1;
+        ShowFlashCard();
+    }
 }
 
 ShowFlashCard();
