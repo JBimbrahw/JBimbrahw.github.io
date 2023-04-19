@@ -1,0 +1,41 @@
+div {
+    text-align: center;
+    font-weight: bold;
+}
+
+body {
+    background-color: #99ddff;
+}
+
+button {
+    margin: 5px 0;
+}
+
+#medium {
+    font-size: 200%;
+}
+
+#big {
+    font-size: 300%;
+}
+
+#card {
+    margin: 50px auto;
+    height: 300px;
+    width: 500px;
+    font-size: 300%;
+    text-align: center;
+    font-size: 42px;
+    font-weight: 500;
+    padding-top: 26px;
+    background-color: #FFF4A3;
+}
+
+#counter {
+    font-size: 24px;
+}
+
+.inlineimg {
+    display: inline;
+    padding: 10px;
+}

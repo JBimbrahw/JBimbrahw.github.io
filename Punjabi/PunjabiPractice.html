@@ -1,0 +1,37 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Punjabi Flash Cards</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div>
+    <p id="big">Punjabi Flash Cards</p>	
+    <div id="card">
+      <p id="questionWord"></p>
+      <p id="answerWord"></p>
+    </div>
+    <div id="controls">
+      <div>
+        <button type="button" onclick="ShowAnswer()">ShowAnswer</button>
+      </div>
+      <div>
+        <button type="button" onclick="Back()">Back</button>
+        <button type="button" onclick="Next()">Next</button>
+      </div>
+      <div>
+        <button type="button" onclick="ReverseTranslate()">Reverse Translate</button>
+      </div>
+      <div>
+        <button type="button" onclick="GoToCardNumber()">Go To Specific Card Number</button>
+      </div>
+      <p id="count">Number of flashcards seen: </p>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
