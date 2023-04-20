@@ -3,8 +3,18 @@ div {
     font-weight: bold;
 }
 
+.preamble, .summary{
+    text-align: left;
+    font-size: 18px;
+    margin: 0px 20px;
+}
+
+.header {
+    font-size: 35px;
+}
+
 body {
-    background-color: #99ddff;
+    background-color: lightgoldenrodyellow;
 }
 
 button {

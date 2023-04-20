@@ -17,6 +17,7 @@ let words = {
     "ਨੁਕਸਾਨ":"damage",
     "ਜੰਗ":"war",
     "ਜ਼ਮਾਨੇ":"times",
+    "ਗਾਇਕੀ":"singing",
     "ਘਰੇਲੂ":"domestic",
     "ਉਤਸ਼ਾਹ":"enthusiasm",
     "ਤਰਾਸ-ਤਰਾਸ ਕਰਨਾ":"to regret",
@@ -47,10 +48,59 @@ let words = {
     "ਅਲੋਪ":"disappear",
     "ਖਿੜੇ":"blossom",
     "ਖਿੜੇ ਹੋਇਆ":"blooming",
+    "ਰਚਨਾ":"composition",
     "ACTION WORDS":"...",
-
-
-
+    "ਚਿੰਬੜੇ ਰਹਿਣਾ":"to cling",
+    "ਲੁਕਣਾ,ਛਿਪਣਾ":"to hide",
+    "ਆਸਰਾ ਲੈਣਾ":"take shelter",
+    "ਧੱਕਣਾ":"to push",
+    "ਚੁੰਮਣਾ":"to kiss",
+    "ਨਚੋੜਨਾ":"to squeeze",
+    "ਫੈਲਾਉਣਾ":"to spread",
+    "ADJECTIVES":"...",
+    "ਨਰਾਜ਼":"angry/annoyed",
+    "ਮਗਨ":"engrossed/busy",
+    "ਪ੍ਰਸੰਨ":"happy/cheerful",
+    "ਖੁਸ਼ੀਆਂ":"happiness",
+    "ਹੋਸ਼ਿਆਰ":"clever",
+    "ਡੂੰਘੀ":"deep",
+    "ਔਖਾ":"difficult",
+    "ਬੇਇਮਾਨ":"dishonest/unscrupulous",
+    "ਨੀਰਸ":"dull (boring)",
+    "ਮੰਦਬੁੱਧ":"stupid",
+    "ਸੌਖਾ":"easy/easier",
+    "ਲਾਭਦਾਇਕ":"economic/beneficial",
+    "ਨਿਰਪੱਖ":"neutral",
+    "ਵਫਾਦਾਰ":"faithful",
+    "ਝੂਠਾ":"false",
+    "ਮਸ਼ਹੂਰ":"famous",
+    "ਪ੍ਰਸਿੱਧ":"famous/popular",
+    "ਕਮਜ਼ੋਰ":"feeble/weak",
+    "ਮਾੜਾ":"feeble/bad",
+    "ਉਪਜਾਉ":"fertile",
+    "ਭਿਆਨਕ":"horrible/fierce",
+    "ਸੱਖਤ":"strict",
+    "ਜਲਦਬਾਜ਼":"in a hurry",
+    "ਸਿਹਤਮੰਦ":"healthy",
+    "ਨਿਰੋਗ":"healthy",
+    "ਇਮਾਨਦਾਰ":"honest",
+    "ਨਿਮਾਣਾ":"humble",
+    "ਅਗਿਆਨ":"ignorance",
+    "ਖਿਆਲੀ":"imaginary",
+    "ਕਾਲਪਨਿਕ":"imaginary",
+    "ਜ਼ਰੂਰੀ":"necessary",
+    "ਭੋਲਾ":"naiive/innocent",
+    "ਨਿਰਦੋਸ਼":"innocent(of blame)",
+    "ਬੇਕਸੂਰ":"innocent(of blame)",
+    "ਈਰਖਾਲੂ":"jealous",
+    "ਵਿਦਵਾਨ":"scholar",
+    "ਨਿਸ਼ਚਿਤ":"fixed",
+    "ਸਹਿਨਸ਼ੀਲ":"tolerant",
+    "ਧੀਰਜਵਾਨ":"patient",
+    "ਬੇਅਵਾਜ਼":"voiceless/quiet",
+    "ਸਨਮਾਨਿਤ":"honoured/respected",
+    "ਸਤਿਕਾਰ ਵਾਲਾ":"respectful",
+    "ਸਤਿਕਾਰਯੋਗ":"respectable",
 };
 
 
@@ -93,9 +143,14 @@ function Back(){
 }
 
 function Next(){
-    if(number == MAX_CARD_NUMBER - 1)   return;
-    number++;
-    ShowFlashCard();
+    if(document.getElementById("answerWord").innerHTML == "")
+        ShowAnswer();
+    else {
+        if(number == MAX_CARD_NUMBER - 1)   return;
+        number++;
+        ShowFlashCard();
+    }
+
 }
 
 function ReverseTranslate() {
@@ -109,8 +164,8 @@ function ReverseTranslate() {
 
 function GoToCardNumber(){
     let num = prompt("What card number would you like to go to? Pick a number between 1 and " + MAX_CARD_NUMBER + ":")
-    if(num <= 0 || isNaN(num) || num >= MAX_CARD_NUMBER){
-        alert("Please try again. Enter a number between 0 and " + MAX_CARD_NUMBER);
+    if(num <= 0 || isNaN(num) || num > MAX_CARD_NUMBER){
+        alert("Please try again. Enter a number between 1 and " + MAX_CARD_NUMBER);
     }
     else {
         number = num - 1;
