@@ -7,3 +7,5 @@ I created this website to help me review what I study as I continue to learn Pun
 The user can test their memorization of the vocabulary with flashcards.
 
 They have the ability to translate from English to Punjabi and vice versa.
+
+To add vocabulary/phrases, update the array in main.js.
