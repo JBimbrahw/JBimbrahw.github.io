@@ -14,7 +14,7 @@
       .summaries {
         padding: 10px 20px;
       }
-      div.fixed {
+      div.sticky {
         position: sticky;
         top: 0px;
         background-color: lightblue;
@@ -23,6 +23,11 @@
         display: flex;
         justify-content: space-between;
         margin: -8px;
+      }
+      @media only screen and (max-width: 600px) {
+        div.sticky {
+          flex-direction: column;
+        }
       }
       .vframes {
         display: flex;
@@ -45,7 +50,7 @@
   </head>
   <body>
     <main>
-        <div id="banner" class="fixed">
+        <div id="banner" class="sticky">
           <a href="Index.html">Home</a>
           <a href="Thoughts&Stories.html">Thoughts & Stories</a>
           <a href="PunjabiLessons.html">Punjabi Lessons</a>
