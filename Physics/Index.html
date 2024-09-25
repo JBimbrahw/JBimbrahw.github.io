@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+      div.sticky {
+        position: sticky;
+        top: 0px;
+        background-color: lightblue;
+        padding: 50px;
+        font-size: 20px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 2;
+        margin: -8px;
+      }
+      @media only screen and (max-width: 600px) {
+        div.sticky {
+          flex-direction: column;
+        }
+      }
+      .vframes {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .container {
+        position: relative;
+        margin-bottom: 20px;
+        margin-right: 10px;
+      }
+      .overlayText {
+        position: absolute;
+        top: 1%;
+        left: 5%;
+        z-index: 1;
+      }
+      #topText {
+        color: black;
+        font-size: 20px;
+        align-self: center;
+      }
+    </style>
+    <title>Punjabi Home Page</title>
+  </head>
+  <body>
+    <main>
+      <div class="sticky">
+        <a href="Index.html">Home</a>
+        <a href="Thoughts&Stories.html">Thoughts & Stories</a>
+        <a href="PunjabiLessons.html">Punjabi Lessons</a>
+        <a href="PunjabiProverbs.html">Proverbs</a>
+        <a href="TEDTalks.html">TED Talks</a>
+      </div>
+      <h1 style="padding-left: 10px;">My Study of Punjabi</h1>
+
+      <p style="font-size: 18px; line-height: 24px; padding-left: 10px;">
+        This is a website I recently started creating to highlight some of my progress over the past year of my journey in learning to speak Punjabi.</br>
+        It also lists some of my favourite TED Talks on language learning.</br>
+        I plan to add more to it over the next few weeks.</br></br>
+        Please use the links in the navigation bar to visit the other pages.</br>
+        The <a href="PunjabiLessons.html">Punjabi Lessons section</a> contains material also found in my Udemy course, available <a href="https://www.udemy.com/course/101-punjabi-phrases/">here.</a>
+      </p>
+    </main>
+
+  </body>
+
+</html>
