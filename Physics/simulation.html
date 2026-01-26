@@ -67,8 +67,8 @@ check(accelAmount * accelDuration >= topSpeed,
   "Acceleration phase reaches required top speed");
 
 const finalLandingSpeed = accelAmount * accelDuration + decelAmount * decelDuration;
-check(finalLandingSpeed > landingSpeed,
-  "Landing speed is above maximum allowed");
+check(finalLandingSpeed <= landingSpeed,
+  "Landing speed is below maximum allowed");
 
 const launchDist = 0.5 * accelAmount * accelDuration ** 2;
 const cruiseDist = (decelTime - accelDuration) * (accelAmount * accelDuration);
