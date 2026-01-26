@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Earth–Moon Intercept Animation</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-family: sans-serif;
+    }
+    #controls button {
+      padding: 10px 18px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="controls" style="color:white; font-size:18px; text-align:center; width:100%; margin-bottom:10px; display: flex; align-items: center;">
+    Your job is to land the Marlin Explorer on the moon!
+    <button onclick="location.reload()">Restart Animation</button>
+    <button onclick="location.href='plan.html'">Next ▶</button>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+// Scene parameters
+const earthRadius = 40;
+const atmosphereRadius = earthRadius * 1.6;
+const moonRadius = 15;
+const orbitRadius = 180;
+const rocketSpeed = 0.73; // visual speed only
+
+let angle = 0;
+let rocket = null;
+let paused = false;
+let pauseTimer = 0;
+
+function drawEarth(x, y) {
+  const grad = ctx.createRadialGradient(x, y, earthRadius, x, y, atmosphereRadius);
+  grad.addColorStop(0, "rgba(120,190,255,0.4)");
+  grad.addColorStop(1, "rgba(120,190,255,0)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, atmosphereRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#2a6cff";
+  ctx.beginPath();
+  ctx.arc(x, y, earthRadius, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawMoon(x, y) {
+  ctx.fillStyle = "#cccccc";
+  ctx.beginPath();
+  ctx.arc(x, y, moonRadius, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawRocket(x, y) {
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.moveTo(x, y - 10);
+  ctx.lineTo(x - 5, y + 10);
+  ctx.lineTo(x + 5, y + 10);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function update() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+
+  const moonX = cx + orbitRadius * Math.cos(angle);
+  const moonY = cy + orbitRadius * Math.sin(angle);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.beginPath();
+  ctx.arc(cx, cy, orbitRadius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  drawEarth(cx, cy);
+  drawMoon(moonX, moonY);
+
+  if (!rocket && Math.abs(angle) < 0.02) {
+    rocket = { x: cx, y: cy - earthRadius };
+  }
+
+  if (rocket) {
+    const targetX = cx;
+    const targetY = cy - orbitRadius + 10 + moonRadius;
+    const dx = targetX - rocket.x;
+    const dy = targetY - rocket.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < rocketSpeed) {
+      rocket.x = targetX;
+      rocket.y = targetY;
+      paused = true;
+      pauseTimer = 120;
+    } else {
+      rocket.x += (dx / dist) * rocketSpeed;
+      rocket.y += (dy / dist) * rocketSpeed;
+    }
+    drawRocket(rocket.x, rocket.y);
+  }
+
+  if (paused) {
+    pauseTimer--;
+    if (pauseTimer <= 0) {
+      angle = 0;
+      rocket = null;
+      paused = false;
+    }
+  } else {
+    angle -= 0.01;
+  }
+
+  requestAnimationFrame(update);
+}
+
+update();
+</script>
+</body>
+</html>

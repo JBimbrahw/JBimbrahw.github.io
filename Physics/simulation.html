@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulation Results</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: sans-serif;
+      background: black;
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      font-size: 56px;
+      margin-bottom: 10px;
+    }
+    #report {
+      max-width: 800px;
+      margin: 30px auto;
+      text-align: left;
+      font-size: 16px;
+    }
+    .pass { color: #4caf50; }
+    .fail { color: #ff5252; }
+    button {
+      padding: 12px 22px;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<h1 id="result"></h1>
+<div id="emoji" style="font-size:48px;"></div>
+
+<div id="report"></div>
+
+<button onclick="location.href='plan.html'">Back</button>
+
+<script>
+const data = JSON.parse(sessionStorage.getItem('missionData'));
+const secondsIn7Days = 7 * 24 * 3600;
+let reportHTML = "";
+let success = true;
+
+function check(condition, description) {
+  if (condition) {
+    reportHTML += `<p class="pass">✔ ${description}</p>`;
+  } else {
+    reportHTML += `<p class="fail">✖ ${description}</p>`;
+    success = false;
+  }
+}
+
+const { totalDist, topSpeed, landingSpeed, accelAmount, accelDuration, decelTime, decelAmount, decelDuration } = data;
+
+check(Math.abs(accelAmount) < 29.4 && Math.abs(decelAmount) < 29.4,
+  "Acceleration and deceleration are below 3 g");
+
+check(accelAmount * accelDuration >= topSpeed,
+  "Acceleration phase reaches required top speed");
+
+const finalLandingSpeed = accelAmount * accelDuration + decelAmount * decelDuration;
+check(finalLandingSpeed > landingSpeed,
+  "Landing speed is above maximum allowed");
+
+const launchDist = 0.5 * accelAmount * accelDuration ** 2;
+const cruiseDist = (decelTime - accelDuration) * (accelAmount * accelDuration);
+const landingDist = (accelAmount * accelDuration) * decelDuration + 0.5 * decelAmount * decelDuration ** 2;
+const totalCalcDist = launchDist + cruiseDist + landingDist;
+
+check(Math.abs(totalCalcDist - totalDist) < 1,
+  "Total distance traveled matches Earth–Moon distance");
+
+check(decelTime + decelDuration === secondsIn7Days,
+  "Total travel time equals 7 days");
+
+if (success) {
+  document.getElementById('result').textContent = 'Success!';
+  document.getElementById('emoji').textContent = '😊';
+} else {
+  document.getElementById('result').textContent = 'Try Again';
+  document.getElementById('emoji').textContent = '☹️';
+}
+
+document.getElementById('report').innerHTML = reportHTML;
+</script>
+
+</body>
+</html>
