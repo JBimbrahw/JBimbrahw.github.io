@@ -74,6 +74,7 @@ const launchDist = 0.5 * accelAmount * accelDuration ** 2;
 const cruiseDist = (decelTime - accelDuration) * (accelAmount * accelDuration);
 const landingDist = (accelAmount * accelDuration) * decelDuration + 0.5 * decelAmount * decelDuration ** 2;
 const totalCalcDist = launchDist + cruiseDist + landingDist;
+console.log("totalCalcDist: ", totalCalcDist);
 
 check(Math.abs(totalCalcDist - totalDist) < 20,
   "Total distance traveled matches Earth–Moon distance");
