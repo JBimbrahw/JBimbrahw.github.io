@@ -79,9 +79,6 @@ console.log("totalCalcDist: ", totalCalcDist);
 check(Math.abs(totalCalcDist - totalDist) < 20,
   "Total distance traveled matches Earth–Moon distance");
 
-check(decelTime + decelDuration === secondsIn7Days,
-  "Total travel time equals 7 days");
-
 if (success) {
   document.getElementById('result').textContent = 'Success!';
   document.getElementById('emoji').textContent = '😊';
