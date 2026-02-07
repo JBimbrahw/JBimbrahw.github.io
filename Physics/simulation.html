@@ -59,6 +59,7 @@ function check(condition, description) {
 }
 
 const { totalDist, topSpeed, landingSpeed, accelAmount, accelDuration, decelTime, decelAmount, decelDuration } = data;
+console.log("totalDist: ", totalDist);
 
 check(Math.abs(accelAmount) < 29.4 && Math.abs(decelAmount) < 29.4,
   "Acceleration and deceleration are below 3 g");
@@ -79,7 +80,7 @@ console.log("totalDist: ", totalDist);
 console.log(Math.abs(totalCalcDist - totalDist));
 console.log(Math.abs(totalCalcDist - totalDist) < 20);
 
-check(Math.abs(totalCalcDist - totalDist) < 20,
+check(Math.abs(totalCalcDist - 380,000,000) < 20,
   "Total distance traveled matches Earth–Moon distance");
 
 if (success) {
