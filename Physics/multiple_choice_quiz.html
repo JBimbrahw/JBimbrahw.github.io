@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinematics Zero To Hero</title>
+<style>
+  :root { --ink:#172033; --muted:#64748b; --blue:#2563eb; --pale:#eff6ff; --green:#15803d; --red:#b91c1c; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:#f1f5f9; color:var(--ink); font-family:Garamond, serif; display:flex; justify-content:center; padding:28px 16px; }
+  .app { width:min(720px,100%); }
+  header { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px; }
+  h1 { font-size:clamp(1.4rem,4vw,2rem); margin:0; }
+  .score { background:white; border:1px solid #dbe3ee; border-radius:12px; padding:10px 14px; font-weight:700; white-space:nowrap; }
+  .card { background:white; border:1px solid #dbe3ee; border-radius:18px; padding:clamp(20px,5vw,36px); box-shadow:0 8px 30px #0f172a0c; }
+  .meta { display:flex; justify-content:space-between; color:var(--muted); font-size:.95rem; margin-bottom:12px; }
+  .track { height:8px; background:#e2e8f0; border-radius:20px; overflow:hidden; margin-bottom:28px; }
+  .fill { height:100%; width:0; background:var(--blue); transition:width .2s; }
+  #question { font-size:1.35rem; line-height:1.45; margin:0 0 22px; }
+  .options { display:grid; gap:12px; }
+  .option { display:flex; align-items:center; gap:12px; text-align:left; width:100%; border:2px solid #dbe3ee; background:white; border-radius:12px; padding:14px 16px; font-size:1rem; cursor:pointer; color:var(--ink); }
+  .option:hover { border-color:#93c5fd; background:#f8fbff; }
+  .option.selected { border-color:var(--blue); background:var(--pale); }
+  .letter { display:grid; place-items:center; width:30px; height:30px; flex:0 0 30px; border-radius:8px; background:#e2e8f0; font-weight:700; }
+  .option.selected .letter { background:var(--blue); color:white; }
+  .actions { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:26px; }
+  button.primary { border:0; border-radius:10px; background:var(--blue); color:white; padding:13px 22px; font-size:1rem; font-weight:700; cursor:pointer; }
+  button.primary:disabled { opacity:.4; cursor:not-allowed; }
+  .feedback { min-height:24px; margin-top:18px; font-weight:700; }
+  .feedback.good { color:var(--green); } .feedback.bad { color:var(--red); }
+  .hint { color:var(--muted); font-size:.9rem; }
+  .result { text-align:center; padding:16px 0; }
+  .result .big { font-size:3.5rem; font-weight:800; margin:12px 0; }
+  .hidden { display:none; }
+  @media(max-width:480px) { header { align-items:flex-start; flex-direction:column; } .score { align-self:stretch; } }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>Master Kinematics in 29 Questions</h1>
+    <div class="score" aria-live="polite">Score: <span id="score">0</span> correct · <span id="missed">0</span> missed</div>
+  </header>
+  <section class="card" id="quizCard">
+    <div class="meta"><span id="counter">Question 1 of 5</span><span id="percent">0% complete</span></div>
+    <div class="track"><div class="fill" id="progress"></div></div>
+    <h2 id="topic"></h2>
+    <h2 id="question"></h2>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <div class="actions">
+      <span class="hint" id="instruction">Choose one answer to continue.</span>
+      <button class="primary" id="next" disabled>Next</button>
+    </div>
+  </section>
+  <section class="card hidden" id="resultCard">
+    <div class="result">
+      <div class="hint">QUIZ COMPLETE</div>
+      <h2>Your final score</h2>
+      <div class="big" id="finalScore">0 / 5</div>
+      <p id="summary"></p>
+      <button class="primary" id="restart">Try again</button>
+    </div>
+  </section>
+</main>
+<script>
+// Edit this question list to create your own quiz.
+// Each question needs: question, four options, and the correct answer index (0=A, 1=B, 2=C, 3=D).
+const questions = [
+  { topic: "Constant Velocity Problem 1", question: "Bob is moving at 1 m/s.  He will take ___ to move 10 m.", options: ["1 s", "2 s", "10 s", "50 s"], answer: 2 },
+  { topic: "Constant Velocity Problem 2", question: "Jane is moving at 20 km/hr.  She will take ___ to move 100 km.", options: ["1 min", "2 hr", "5 hr", "5 s"], answer: 2 },
+
+  { topic: "Constant Velocity Problem 3", question: "t = 15s, v = 4 m/s.  Solve for d", options: ["60 m", "400 m", "5 m", "5 s"], answer: 0 },
+  { topic: "Constant Velocity Problem 4", question: "t = 0.2s, v = 1000 m/s.  Solve for d", options: ["20 m", "4000 m", "20.0 m", "200 m"], answer: 3 },
+
+  { topic: "Constant Velocity Problem 5", question: "t = 5s, d = 800 m.  Solve for v", options: ["160 m/s", "4 km/hr", "4000 m/s", "0.00625 m/s"], answer: 0 },
+  { topic: "Constant Velocity Problem 6", question: "t = 15s, d = 4 m.  Solve for v", options: ["60 m", "4/15 m/s", "5 m", "5 s"], answer: 1 },
+
+  { topic: "Constant Acceleration Problem 1", question: "If a = 2 m/s/s and ∆v = 20 m/s, solve for t.", options: ["1 s", "2 s", "10 s", "50 s"], answer: 2 },
+  { topic: "Constant Acceleration Problem 2", question: "If a = 5 m/s/s and t = 5 s, solve for ∆v.", options: ["25 s", "2 m/s", "250 m/s", "25 m/s"], answer: 3 },
+  { topic: "Constant Acceleration Problem 3", question: "What acceleration is required to increase your velocity by 200 m/s steadily over 40 s?", options: ["1 m/s/s", "5 m/s/s", "8000 m/s/s", "5 m/s"], answer: 1 },
+
+  { topic: "Resultant Problem 1", question: "Sheila travels east 3 km and then north 4 km. What is the magnitude of her total displacement?", options: ["3 km", "4 km", "10 km", "5 km"], answer: 3 },
+  { topic: "Resultant Problem 2", question: "Sheila travels east 3 km and then north 4 km. What is her overall direction of travel?", options: ["East", "North", "Some angle North of East", "Some angle East of North"], answer: 2 },
+  { topic: "Resultant Problem 3", question: "Sheila travels east 3 km and then north 4 km. What is her overall direction of travel?", options: ["0 degrees North of East", "5 degrees North of East", "-12 degrees North of East", "53 degrees North of East"], answer: 3 },
+
+  { topic: "1D Projectile Motion Problem 1", question: "An object is thrown straight up with a velocity of 9.8 m/s. How long does it take before it stops rising?", options: ["1 s", "2 s", "3 s", "4 s"], answer: 0 },
+  { topic: "1D Projectile Motion Problem 2", question: "An object is thrown straight up with a velocity of 19.6 m/s. How long does it take before it stops rising?", options: ["1 s", "2 s", "3 s", "4 s"], answer: 1 },
+  { topic: "1D Projectile Motion Problem 3", question: "An object is thrown straight up with a velocity of 29.4 m/s. How long does it take before it stops rising?", options: ["1 s", "2 s", "3 s", "4 s"], answer: 2 },
+  { topic: "1D Projectile Motion Problem 4", question: "An object is thrown straight up with a velocity of 50 m/s. How long does it take before it stops rising?", options: ["about 4 s", "about 5 s", "3 s", "14 s"], answer: 1 },
+  { topic: "1D Projectile Motion Problem 5", question: "An object is thrown straight up with a velocity of 50 m/s. How long is it in the air?", options: ["about 10 s", "about 5 s", "about 6 s", "about 14 s"], answer: 0 },
+  { topic: "1D Projectile Motion Problem 6", question: "An object is thrown straight up with a velocity of 50 m/s. What height does it reach?", options: ["12 m", "40.6 m", "9.82 m", "128 m"], answer: 3 },
+
+  { topic: "1D Falling Object Problem 1", question: "How long does it take to free fall 80 m?", options: ["Depends what planet you are on...", "2 s", "...but about 4s if you are on earth ", "A and C"], answer: 3 },
+  { topic: "1D Falling Object Problem 2", question: "True or False: In Earth's atmosphere, you fall roughly 3,000 meters in one minute. Without air resistance, you would fall about 17, 650 m.", options: ["Depends what planet you are on", "True", "False", "A and C"], answer: 1 },
+  
+  { topic: "Projectile Motion Level Launch Problem 1", question: "How long does it take to free fall 80 m?", options: ["Depends what planet you are on...", "2 s", "...but about 4s if you are on earth ", "A and C"], answer: 3 },
+  { topic: "Projectile Motion Level Launch Problem 2", question: "If you throw an apple horizontally out a window, how long does it take to fall 80 m?", options: ["Depends what planet you are on...", "2 s", "...but about 4s if you are on earth ", "A and C"], answer: 3 },
+  { topic: "Projectile Motion Level Launch Problem 3", question: "If you throw an apple horizontally out a window with an initial velocity of 5 m/s, how far away does it land?", options: ["about 20m"], answer: 0 },
+  { topic: "Projectile Motion Level Launch Problem 4", question: "If you throw an apple horizontally out a window with an initial velocity of 5 m/s, how do you calculate how far away it lands?", options: ["time for free fall X horizontal velocity"], answer: 0 },
+
+  { topic: "2D Projectile Motion Problem 1", question: "If you throw a ball at 20 m/s at an angle of 30 degrees above the horizontal, what is its initial vertical velocity?", options: ["20 sin(30) m/s", "10 m/s", "A and B"], answer: 2 },
+  { topic: "2D Projectile Motion Problem 2", question: "If you throw a ball at 20 m/s at an angle of 30 degrees above the horizontal, how long does it take to reach max height?", options: ["1 s", "1.9 s", "4 s", "about 3 s"], answer: 0 },
+  { topic: "2D Projectile Motion Problem 3", question: "If you throw a ball at 20 m/s at an angle of 30 degrees above the horizontal, how long is it up in the air (assume level launch and landing)?", options: ["10/9.8 s", "1.9 s", "2 s", "about 3 s"], answer: 2 },
+  { topic: "2D Projectile Motion Problem 4", question: "If you throw a ball at 20 m/s at an angle of 30 degrees above the horizontal, what is the horizontal velocity?", options: ["constant", "20 cos(30) m/s", "17.3 m/s", "all of the above"], answer: 3 },
+  { topic: "2D Projectile Motion Problem 5", question: "If you throw a ball at 20 m/s at an angle of 30 degrees above the horizontal, What is the range (horizontal distance traveled) in m/s?", options: ["the air time X the constant horizontal velocity", "2 * 17.3", "all of the above"], answer: 2 },
+  
+];
+
+let current = 0, correct = 0, missed = 0, selected = null;
+const letters = ["A", "B", "C", "D"];
+const $ = id => document.getElementById(id);
+
+function updateScore() {
+  $("score").textContent = correct;
+  $("missed").textContent = missed;
+}
+function renderQuestion() {
+  selected = null;
+  const q = questions[current];
+  $("counter").textContent = `Question ${current + 1} of ${questions.length}`;
+  $("percent").textContent = `${Math.round(current / questions.length * 100)}% complete`;
+  $("progress").style.width = `${current / questions.length * 100}%`;
+  $("topic").textContent = q.topic;
+  $("question").textContent = q.question;
+  $("options").innerHTML = "";
+  q.options.forEach((option, i) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "option";
+    button.innerHTML = `<span class="letter">${letters[i]}</span><span></span>`;
+    button.querySelector("span:last-child").textContent = option;
+    button.addEventListener("click", () => {
+      selected = i;
+      document.querySelectorAll(".option").forEach((el, index) => el.classList.toggle("selected", index === i));
+      $("next").disabled = false;
+      $("feedback").textContent = "";
+      $("feedback").className = "feedback";
+    });
+    $("options").appendChild(button);
+  });
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  $("next").disabled = true;
+  $("next").textContent = current === questions.length - 1 ? "Finish" : "Next";
+  $("instruction").textContent = "Choose one answer to continue.";
+  updateScore();
+}
+function advance() {
+  if (selected === null) return;
+  if (selected === questions[current].answer) {
+    correct++;
+  } else {
+    missed++;
+  }
+  updateScore();
+  current++;
+  if (current < questions.length) {
+    renderQuestion();
+  } else {
+    $("quizCard").classList.add("hidden");
+    $("resultCard").classList.remove("hidden");
+    $("progress").style.width = "100%";
+    $("finalScore").textContent = `${correct} / ${questions.length}`;
+    const pct = Math.round(correct / questions.length * 100);
+    $("summary").textContent = `You answered ${correct} correctly and missed ${missed}. That's ${pct}%.`;
+    $("score").textContent = correct;
+    $("missed").textContent = missed;
+  }
+}
+$("next").addEventListener("click", advance);
+$("restart").addEventListener("click", () => {
+  current = 0; correct = 0; missed = 0;
+  $("resultCard").classList.add("hidden");
+  $("quizCard").classList.remove("hidden");
+  renderQuestion();
+});
+renderQuestion();
+</script>
+</body>
+</html>
